@@ -3,16 +3,19 @@ import TodoInput from './components/TodoInput/TodoInput';
 import TodoList from './components/TodoList/TodoList';
 
 function App() {
-  const [todo, setTodo] = useState<string>("");
+    const [todo, setTodo] = useState<string>("");
 
-  function handleTodoAdd() {
-    console.log(todo);
+  // タスクを格納する配列
+  const [todos, setTodos] = useState<string[]>([]);
+
+    // eだけだとany型になるのでReact.EventCallbackで型を指定
+  function handleAddTask(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setTodo(e.target["todoInput"].value);
+    setTodos([...todos, e.target["todoInput"].value]);
+    e.target["todoInput"].value = "";
   }
 
-  // eだけだとany型になるのでReact.EventCallbackで型を指定
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTodo(e.target.value);
-  }
 
   return (
     <div className="min-h-screen bg-gray-300">
@@ -23,13 +26,13 @@ function App() {
       </div>
       <div className="pt-10">
         <div className="w-full max-w-md mx-auto px-2">
-          <TodoInput value={todo} onTodoAdd={handleTodoAdd} onChange={handleInputChange} />
+          <TodoInput onAddTask={handleAddTask}  />
         </div>
       </div>
 
       <div className="pt-5">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList />
+          <TodoList todos={todos}/>
         </div>
       </div>
 
