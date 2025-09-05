@@ -16,9 +16,11 @@ function App() {
     e.target["todoInput"].value = "";
   }
 
-  function handleDelete(todo: string) {
+  function handleDelete(index: number) {
     //todosからタスクを削除
-    setTodos(todos.filter((deleteTodo) => deleteTodo !== todo));
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
   }
 
 

@@ -3,7 +3,7 @@ import TodoItem from '../TodoItem/TodoItem';
 
 type TodoListProps = {
   todos: string[];
-  handleDelete: (todo: string) => void;
+  handleDelete: (index: number) => void;
 }
 
 // TodoInputで入力したタスクの配列ををmapでTodoItemに渡す
@@ -13,7 +13,7 @@ function TodoList({ todos, handleDelete }: TodoListProps) {
       <ul className="flex flex-col gap-3">
         {
           todos.map((todo, index) => {
-            return <TodoItem todo={todo} key={index} handleDelete={handleDelete} />
+            return <TodoItem todo={todo} key={index} handleDelete={handleDelete} index={index} />
           })
         }
       </ul>
