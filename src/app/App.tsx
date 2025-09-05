@@ -16,6 +16,11 @@ function App() {
     e.target["todoInput"].value = "";
   }
 
+  function handleDelete(todo: string) {
+    //todosからタスクを削除
+    setTodos(todos.filter((deleteTodo) => deleteTodo !== todo));
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-300">
@@ -32,7 +37,7 @@ function App() {
 
       <div className="pt-5">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList todos={todos}/>
+          <TodoList todos={todos} handleDelete={handleDelete}/>
         </div>
       </div>
 
