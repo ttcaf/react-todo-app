@@ -1,25 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoInput from './components/TodoInput/TodoInput';
 import TodoList from './components/TodoList/TodoList';
 
 function App() {
-    const [todo, setTodo] = useState<string>("");
-
   // タスクを格納する配列
   const [todos, setTodos] = useState<string[]>([]);
 
-    // eだけだとany型になるのでReact.EventCallbackで型を指定
+  const todoStorage = localStorage.getItem('todos');
+  
+  // ロード時にlocalStorageからデータを読み込む
+  useEffect(() => {
+    if( todoStorage ) {
+      setTodos(JSON.parse(todoStorage));
+    } else {
+      localStorage.setItem('todos', JSON.stringify([]));
+    }
+  }, []);
+  
+
+  // eだけだとany型になるのでReact.EventCallbackで型を指定
   function handleAddTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setTodo(e.target["todoInput"].value);
+
+    if(todoStorage) {
+      setTodos(JSON.parse(todoStorage));
+    } else {
+      localStorage.setItem('todos', JSON.stringify([]));
+    }
+
+    localStorage.setItem('todos', JSON.stringify([...todos, e.target["todoInput"].value]));
     setTodos([...todos, e.target["todoInput"].value]);
     e.target["todoInput"].value = "";
   }
 
+  //todosからタスクを削除
   function handleDelete(index: number) {
-    //todosからタスクを削除
     const newTodos = [...todos];
     newTodos.splice(index, 1);
+    localStorage.setItem('todos', JSON.stringify(newTodos));
     setTodos(newTodos);
   }
 
