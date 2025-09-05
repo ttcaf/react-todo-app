@@ -2,18 +2,26 @@ import React, { useState, useEffect } from 'react';
 import TodoInput from './components/TodoInput/TodoInput';
 import TodoList from './components/TodoList/TodoList';
 
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+const TODO_KEY = 'todos';
+
 function App() {
   // タスクを格納する配列
-  const [todos, setTodos] = useState<string[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
 
-  const todoStorage = localStorage.getItem('todos');
+  const todoStorage = localStorage.getItem(TODO_KEY);
   
   // ロード時にlocalStorageからデータを読み込む
   useEffect(() => {
     if( todoStorage ) {
       setTodos(JSON.parse(todoStorage));
     } else {
-      localStorage.setItem('todos', JSON.stringify([]));
+      localStorage.setItem(TODO_KEY, JSON.stringify([]));
     }
   }, []);
   
@@ -22,21 +30,37 @@ function App() {
   function handleAddTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if(todoStorage) {
-      setTodos(JSON.parse(todoStorage));
-    } else {
-      localStorage.setItem('todos', JSON.stringify([]));
+    const newText = e.target["todoInput"].value;
+    if(newText.trim() === "") {
+      return;
+    }
+    
+    // タイムスタンプをIDにする
+    const timestamp = new Date(e.timeStamp * 1000).getTime();
+    console.log(timestamp);
+    const newTodo: Todo = {
+      id: timestamp,
+      text: newText,
+      completed: false
     }
 
-    localStorage.setItem('todos', JSON.stringify([...todos, e.target["todoInput"].value]));
-    setTodos([...todos, e.target["todoInput"].value]);
+    setTodos([...todos, newTodo]);
+    localStorage.setItem(TODO_KEY, JSON.stringify([...todos, newTodo]));
     e.target["todoInput"].value = "";
   }
 
+  function handleComplete(id: number, completed: boolean) {
+    const newTodos = todos.map((todo) => 
+      todo.id === id ? {...todo, completed: !todo.completed} : todo
+    )
+    setTodos(newTodos);
+    localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
+  }
+
   //todosからタスクを削除
-  function handleDelete(index: number) {
+  function handleDelete(id: number) {
     const newTodos = [...todos];
-    newTodos.splice(index, 1);
+    newTodos.splice(newTodos.findIndex((todo) => todo.id === id), 1);
     localStorage.setItem('todos', JSON.stringify(newTodos));
     setTodos(newTodos);
   }
@@ -57,7 +81,7 @@ function App() {
 
       <div className="pt-5">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList todos={todos} handleDelete={handleDelete}/>
+          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} />
         </div>
       </div>
 
