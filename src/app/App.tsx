@@ -16,7 +16,7 @@ function App() {
 
   const todoStorage = localStorage.getItem(TODO_KEY);
   
-  // ロード時にlocalStorageからデータを読み込む
+  // ロード時にlocalStorageからデータを読み込む（レンダー後に実行）
   useEffect(() => {
     if( todoStorage ) {
       setTodos(JSON.parse(todoStorage));
@@ -24,7 +24,6 @@ function App() {
       localStorage.setItem(TODO_KEY, JSON.stringify([]));
     }
   }, []);
-  
 
   // eだけだとany型になるのでReact.EventCallbackで型を指定
   function handleAddTask(e: React.FormEvent<HTMLFormElement>) {
@@ -35,7 +34,7 @@ function App() {
       return;
     }
     
-    // タイムスタンプをIDにする
+    // タイムスタンプをミリ秒に変換しIDにする
     const timestamp = new Date(e.timeStamp * 1000).getTime();
     console.log(timestamp);
     const newTodo: Todo = {
@@ -44,25 +43,25 @@ function App() {
       completed: false
     }
 
-    setTodos([...todos, newTodo]);
-    localStorage.setItem(TODO_KEY, JSON.stringify([...todos, newTodo]));
+    const updatedTodos = [...todos, newTodo];
+    setTodos(updatedTodos);
+    localStorage.setItem(TODO_KEY, JSON.stringify(updatedTodos));
     e.target["todoInput"].value = "";
   }
 
-  function handleComplete(id: number, completed: boolean) {
+  function handleComplete(id: number) {
     const newTodos = todos.map((todo) => 
       todo.id === id ? {...todo, completed: !todo.completed} : todo
-    )
+    );
     setTodos(newTodos);
     localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
   }
 
   //todosからタスクを削除
   function handleDelete(id: number) {
-    const newTodos = [...todos];
-    newTodos.splice(newTodos.findIndex((todo) => todo.id === id), 1);
-    localStorage.setItem('todos', JSON.stringify(newTodos));
+    const newTodos = todos.filter((todo) => todo.id !== id);
     setTodos(newTodos);
+    localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
   }
 
 
