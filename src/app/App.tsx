@@ -16,17 +16,17 @@ function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<string>("all");
 
-  function init() {
+  // localStorageはReactとは別の仕組みであり接続に副作用がないので、初期化時にはレンダー後に実行する必要がある。
+  useEffect(() => {
     const todoStorage = localStorage.getItem(TODO_KEY);
     if(todoStorage) {
       setTodos(JSON.parse(todoStorage));
     } else {
       localStorage.setItem(TODO_KEY, JSON.stringify([]));
     }
-  }
+  }, []);
 
-  window.addEventListener('load', init);
-
+  // 状態の更新をまとめて行う
   function saveTodos(newTodos: Todo[]) {
     setTodos(newTodos);
     localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
@@ -157,7 +157,7 @@ function App() {
 
       <div className="pt-15">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} handlePriority={handlePriority} handleEdit={handleEdit} />
+          <TodoList todos={todos} onDelete={handleDelete} onComplete={handleComplete} filter={filter} onPriority={handlePriority} onEdit={handleEdit} />
         </div>
       </div>
 
