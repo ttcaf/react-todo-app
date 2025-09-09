@@ -13,17 +13,27 @@ const TODO_KEY = 'todos';
 function App() {
   // タスクを格納する配列
   const [todos, setTodos] = useState<Todo[]>([]);
-
-  const todoStorage = localStorage.getItem(TODO_KEY);
   
-  // ロード時にlocalStorageからデータを読み込む（レンダー後に実行）
-  useEffect(() => {
-    if( todoStorage ) {
+  function init() {
+    const todoStorage = localStorage.getItem(TODO_KEY);
+    if(todoStorage) {
       setTodos(JSON.parse(todoStorage));
     } else {
       localStorage.setItem(TODO_KEY, JSON.stringify([]));
     }
-  }, []);
+  }
+
+  window.addEventListener('load', init);
+
+  function saveTodos(newTodos: Todo[]) {
+    setTodos(newTodos);
+    localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
+  }
+
+  function deleteTodos(id: number) {
+    const newTodos = todos.filter((todo) => todo.id !== id);
+    saveTodos(newTodos);
+  }
 
   // eだけだとany型になるのでReact.EventCallbackで型を指定
   function handleAddTask(e: React.FormEvent<HTMLFormElement>) {
@@ -34,7 +44,8 @@ function App() {
       return;
     }
     
-    // タイムスタンプをミリ秒に変換しIDにする
+    // タイムスタンプをミリ秒に変換しIDにする　→　コメントDate型はmsでないとうけつけないという理由にする
+    // やってる理由を記述する
     const timestamp = new Date(e.timeStamp * 1000).getTime();
     console.log(timestamp);
     const newTodo: Todo = {
@@ -44,8 +55,7 @@ function App() {
     }
 
     const updatedTodos = [...todos, newTodo];
-    setTodos(updatedTodos);
-    localStorage.setItem(TODO_KEY, JSON.stringify(updatedTodos));
+    saveTodos(updatedTodos);
     e.target["todoInput"].value = "";
   }
 
@@ -53,15 +63,12 @@ function App() {
     const newTodos = todos.map((todo) => 
       todo.id === id ? {...todo, completed: !todo.completed} : todo
     );
-    setTodos(newTodos);
-    localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
+    saveTodos(newTodos);
   }
 
   //todosからタスクを削除
   function handleDelete(id: number) {
-    const newTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(newTodos);
-    localStorage.setItem(TODO_KEY, JSON.stringify(newTodos));
+    deleteTodos(id);
   }
 
 
@@ -75,6 +82,12 @@ function App() {
       <div className="pt-10">
         <div className="w-full max-w-md mx-auto px-2">
           <TodoInput onAddTask={handleAddTask}  />
+        </div>
+      </div>
+
+      <div className="pt-10">
+        <div className="w-full max-w-md mx-auto px-2">
+
         </div>
       </div>
 
