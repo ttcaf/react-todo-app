@@ -1,8 +1,6 @@
 import React from 'react';
 import TodoItem from '../TodoItem/TodoItem';
 
-type Filter = "all" | "completed" | "incompleted";
-
 type Todo = {
   id: number;
   text: string;
@@ -14,7 +12,7 @@ type TodoListProps = {
   todos: Todo[];
   handleDelete: (id: number) => void;
   handleComplete: (id: number, completed: boolean) => void;
-  filter: Filter;
+  filter: string;
   handlePriority: (id: number, priority: string) => void;
 }
 

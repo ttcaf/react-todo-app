@@ -1,7 +1,5 @@
 import React from 'react';
 
-type Filter = "all" | "completed" | "incompleted";
-
 type Todo = {
   id: number;
   text: string;
@@ -13,7 +11,7 @@ type TodoItemProps = {
   todo: Todo;
   handleDelete: (id: number) => void;
   handleComplete: (id: number, completed: boolean) => void;
-  filter: Filter;
+  filter: string;
   handlePriority: (id: number, priority: string) => void;
 }
 

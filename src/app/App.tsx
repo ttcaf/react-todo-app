@@ -9,15 +9,12 @@ type Todo = {
   priority: string;
 }
 
-type Filter = "all" | "completed" | "incompleted";
-
 const TODO_KEY = 'todos';
 
 function App() {
   // タスクを格納する配列
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<Filter>("all");
-  const [priority, setPriority] = useState<string>("medium");
+  const [filter, setFilter] = useState<string>("all");
 
   function init() {
     const todoStorage = localStorage.getItem(TODO_KEY);
@@ -40,7 +37,6 @@ function App() {
     saveTodos(newTodos);
   }
 
-  // eだけだとany型になるのでReact.EventCallbackで型を指定
   function handleAddTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -49,8 +45,7 @@ function App() {
       return;
     }
     
-    // タイムスタンプをミリ秒に変換しIDにする　→　コメントDate型はmsでないとうけつけないという理由にする
-    // やってる理由を記述する
+    // コメントDate型はmsでないとうけつけないという理由にする
     const timestamp = new Date(e.timeStamp * 1000).getTime();
     console.log(timestamp);
     const newTodo: Todo = {
@@ -89,6 +84,25 @@ function App() {
         break;
       case "incompleted":
         setFilter("incompleted");
+        break;
+    }
+
+    // リロードしたら元に戻るようにuseStateのみ変更を加える
+    const order = e.target["order"].value;
+    switch(order) {
+      case "date":
+        // IDを日時に設定しているのでID参照でソート
+        const sortedTodosByDate = [...todos].sort((a, b) => a.id - b.id);
+        setTodos(sortedTodosByDate);
+        break;
+      case "priority":
+        const priorityOrder = {
+          'high': 1,
+          'medium': 2,
+          'low': 3
+        };
+        const sortedTodosByPriority = [...todos].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+        setTodos(sortedTodosByPriority);
         break;
     }
   }
