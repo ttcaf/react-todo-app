@@ -6,6 +6,7 @@ type Todo = {
   id: number;
   text: string;
   completed: boolean;
+  priority: string;
 }
 
 type Filter = "all" | "completed" | "incompleted";
@@ -16,7 +17,8 @@ function App() {
   // タスクを格納する配列
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
-  
+  const [priority, setPriority] = useState<string>("medium");
+
   function init() {
     const todoStorage = localStorage.getItem(TODO_KEY);
     if(todoStorage) {
@@ -54,7 +56,8 @@ function App() {
     const newTodo: Todo = {
       id: timestamp,
       text: newText,
-      completed: false
+      completed: false,
+      priority: "medium"
     }
 
     const updatedTodos = [...todos, newTodo];
@@ -90,6 +93,25 @@ function App() {
     }
   }
 
+  function handlePriority(id: number, priority: string) {
+    const newTodos = todos.map((todo) => {
+      if(todo.id === id) {
+        switch(priority) {
+          case "high":
+            return { ...todo, priority: "medium" };
+          case "medium":
+            return { ...todo, priority: "low" };
+          case "low":
+            return { ...todo, priority: "high" };
+          default:
+            return todo;
+        }
+      }
+      return todo;
+    });
+    saveTodos(newTodos);
+  }
+
   return (
     <div className="min-h-screen bg-gray-300">
       <div className="pt-20">
@@ -111,7 +133,7 @@ function App() {
 
       <div className="pt-15">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} />
+          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} handlePriority={handlePriority} />
         </div>
       </div>
 
