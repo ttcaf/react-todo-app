@@ -6,7 +6,6 @@ type Todo = {
   text: string;
   completed: boolean;
   priority: string;
-  edit: boolean;
 }
 
 type TodoListProps = {
