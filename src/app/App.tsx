@@ -104,24 +104,14 @@ function App() {
   function handleSort(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const completed = e.target["completed"].value;
-    switch(completed) {
-      case "all":
-        setFilter("all");
-        break;
-      case "completed":
-        setFilter("completed");
-        break;
-      case "incompleted":
-        setFilter("incompleted");
-        break;
-    }
+    setFilter(completed);
 
-    // リロードしたら元に戻るようにuseStateのみ変更を加える
     const order = e.target["order"].value;
     switch(order) {
       case "date":
         // IDを日時に設定しているのでID参照でソート
         const sortedTodosByDate = [...todos].sort((a, b) => a.id - b.id);
+        // リロードしたら元に戻るようにuseStateのみ変更を加える
         setTodos(sortedTodosByDate);
         break;
       case "priority":
@@ -131,6 +121,7 @@ function App() {
           'low': 3
         };
         const sortedTodosByPriority = [...todos].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+        // リロードしたら元に戻るようにuseStateのみ変更を加える
         setTodos(sortedTodosByPriority);
         break;
     }
