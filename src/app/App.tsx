@@ -52,7 +52,7 @@ function App() {
       id: timestamp,
       text: newText,
       completed: false,
-      priority: "medium"
+      priority: "medium",
     }
 
     const updatedTodos = [...todos, newTodo];
@@ -64,6 +64,35 @@ function App() {
     const newTodos = todos.map((todo) => 
       todo.id === id ? {...todo, completed: !todo.completed} : todo
     );
+    saveTodos(newTodos);
+  }
+
+  function handlePriority(id: number, priority: string) {
+    const newTodos = todos.map((todo) => {
+      if(todo.id === id) {
+        switch(priority) {
+          case "high":
+            return { ...todo, priority: "medium" };
+          case "medium":
+            return { ...todo, priority: "low" };
+          case "low":
+            return { ...todo, priority: "high" };
+          default:
+            return todo;
+        }
+      }
+      return todo;
+    });
+    saveTodos(newTodos);
+  }
+
+  function handleEdit(id: number, text: string) {
+    const newTodos = todos.map((todo) => {
+      if(todo.id === id) {
+        return { ...todo, text: text };
+      }
+      return todo;
+    });
     saveTodos(newTodos);
   }
 
@@ -107,25 +136,6 @@ function App() {
     }
   }
 
-  function handlePriority(id: number, priority: string) {
-    const newTodos = todos.map((todo) => {
-      if(todo.id === id) {
-        switch(priority) {
-          case "high":
-            return { ...todo, priority: "medium" };
-          case "medium":
-            return { ...todo, priority: "low" };
-          case "low":
-            return { ...todo, priority: "high" };
-          default:
-            return todo;
-        }
-      }
-      return todo;
-    });
-    saveTodos(newTodos);
-  }
-
   return (
     <div className="min-h-screen bg-gray-300">
       <div className="pt-20">
@@ -147,7 +157,7 @@ function App() {
 
       <div className="pt-15">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} handlePriority={handlePriority} />
+          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} handlePriority={handlePriority} handleEdit={handleEdit} />
         </div>
       </div>
 

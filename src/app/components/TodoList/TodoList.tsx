@@ -6,6 +6,7 @@ type Todo = {
   text: string;
   completed: boolean;
   priority: string;
+  edit: boolean;
 }
 
 type TodoListProps = {
@@ -14,16 +15,17 @@ type TodoListProps = {
   handleComplete: (id: number, completed: boolean) => void;
   filter: string;
   handlePriority: (id: number, priority: string) => void;
+  handleEdit: (id: number, text: string) => void;
 }
 
 // TodoInputで入力したタスクの配列ををmapでTodoItemに渡す
-function TodoList({ todos, handleDelete, handleComplete, filter, handlePriority }: TodoListProps) {
+function TodoList({ todos, handleDelete, handleComplete, filter, handlePriority, handleEdit }: TodoListProps) {
   return (
     <div className="bg-white py-5 px-4 rounded-md">
       <ul className="flex flex-col gap-3">
         {
           todos.map((todo) => {
-            return <TodoItem todo={todo} key={todo.id} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} handlePriority={handlePriority} />
+            return <TodoItem todo={todo} key={todo.id} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} handlePriority={handlePriority} handleEdit={handleEdit} />
           })
         }
       </ul>
