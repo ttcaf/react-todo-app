@@ -6,14 +6,25 @@ type Todo = {
   completed: boolean;
 }
 
+type Filter = "all" | "completed" | "incompleted";
+
 type TodoItemProps = {
   todo: Todo;
   handleDelete: (id: number) => void;
   handleComplete: (id: number, completed: boolean) => void;
+  filter: Filter;
 }
 
 // TodoListで渡されたタスクを表示
-function TodoItem({ todo, handleDelete, handleComplete }: TodoItemProps) {
+function TodoItem({ todo, handleDelete, handleComplete, filter }: TodoItemProps) {
+
+  if(filter === "completed" && !todo.completed) {
+    return null;
+  }
+
+  if(filter === "incompleted" && todo.completed) {
+    return null;
+  }
 
   return (
     <li className="w-full flex pb-3 border-b border-gray-300">

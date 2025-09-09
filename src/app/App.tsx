@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import TodoInput from './components/TodoInput/TodoInput';
 import TodoList from './components/TodoList/TodoList';
-
+import TodoSort from './components/TodoSort/TodoSort';
 type Todo = {
   id: number;
   text: string;
   completed: boolean;
 }
 
+type Filter = "all" | "completed" | "incompleted";
+
 const TODO_KEY = 'todos';
 
 function App() {
   // タスクを格納する配列
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [filter, setFilter] = useState<Filter>("all");
   
   function init() {
     const todoStorage = localStorage.getItem(TODO_KEY);
@@ -71,6 +74,21 @@ function App() {
     deleteTodos(id);
   }
 
+  function handleSort(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const completed = e.target["completed"].value;
+    switch(completed) {
+      case "all":
+        setFilter("all");
+        break;
+      case "completed":
+        setFilter("completed");
+        break;
+      case "incompleted":
+        setFilter("incompleted");
+        break;
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-300">
@@ -86,14 +104,14 @@ function App() {
       </div>
 
       <div className="pt-10">
-        <div className="w-full max-w-md mx-auto px-2">
-
+        <div className="w-full max-w-4xl mx-auto px-2">
+          <TodoSort onSort={handleSort} />
         </div>
       </div>
 
-      <div className="pt-5">
+      <div className="pt-15">
         <div className="w-full max-w-4xl mx-auto px-2">
-          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} />
+          <TodoList todos={todos} handleDelete={handleDelete} handleComplete={handleComplete} filter={filter} />
         </div>
       </div>
 
